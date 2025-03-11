@@ -5,8 +5,10 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
-use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Facades\JWTAuth;
+use Tymon\JWTAuth\Exceptions\JWTException;
 use Validator;
+use Illuminate\Support\Facades\Cookie;
 
 class AuthController extends Controller
 {
@@ -49,17 +51,49 @@ class AuthController extends Controller
     {
         $credentials = $request->only('email', 'password');
 
-        if (!$token = Auth::attempt($credentials)) {
-            return response()->json(['error' => 'Unauthorized'], 401);
+        try {
+            if (!$accessToken=JWTAuth::attempt($credentials)) return response()->json([
+                "data"=>null,
+                "msg"=>'check your mail or password'
+            ],401);
+        }
+        catch (JWTException $e) {
+            return response()->json([
+                'data'=>null,
+                'msg'=>'Acces token fails']
+                ,401);
         }
 
-        return response()->json(['token' => $token]);
+        $user=JWTAuth::user();
+        $refreshToken = JWTAuth::claims(['exp' => now()->addDays(7)->timestamp])->fromUser($user);
+
+        $cookie = Cookie::make('refresh_token', $refreshToken, 10080, '/', null, true, true, false, 'Strict');
+
+        return response()->json([
+            "data"=>$user,
+            "accessToken"=>$accessToken
+        ])->withCookie($cookie);
     }
 
     public function logout()
     {
-        Auth::logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        try {
+
+            $accessToken = JWTAuth::getToken();
+            if ($accessToken) {
+                JWTAuth::invalidate($accessToken);
+            }
+
+            $cookie = Cookie::forget('refresh_token');
+
+            return response()->json([
+                "msg" => "logout successfull"
+            ])->withCookie($cookie);
+        } catch (JWTException $e) {
+            return response()->json([
+                "msg" => "Impossible d'invalider le token"
+            ], 500);
+        }
     }
 
     public function userProfile()
