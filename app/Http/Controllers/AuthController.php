@@ -15,7 +15,9 @@ class AuthController extends Controller
     public function register(Request $request)
     {
         $validation = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
+            'lname' => 'required|string|max:255',
+            'fname' => 'nullable|string|max:255',
+            'address' => 'required|string|max:255',
             'email' => 'required|string|email|unique:users',
             'password' => 'required|string|min:6',
         ], [
@@ -29,19 +31,21 @@ class AuthController extends Controller
         }
 
         try{
-            User::create([
-                'name' => $request->name,
-                'email' => $request->email,
-                'password' => $request->password,
-            ]);
+            $users = User::create([
+                        'fname' => $request->fname,
+                        'lname' => $request->lname,
+                        'email' => $request->email,
+                        'password' => $request->password,
+                        'address' => $request->address,
+                    ]);
             return response()->json([
-                'data' => $request,
+                'data' => $users,
                 'message'=> "Register Successfull",
             ], 201);
         }catch(Exception $e){
             return response()->json([
                 'data'=>$e->getMessage(),
-                'msg' => 'Failed to create user '
+                'message' => 'Error while creating user'
             ], 500);
         }
 
@@ -60,7 +64,7 @@ class AuthController extends Controller
         catch (JWTException $e) {
             return response()->json([
                 'data'=>null,
-                'msg'=>'Acces token fails']
+                'message'=>'Acces token fails']
                 ,401);
         }
 
@@ -87,11 +91,11 @@ class AuthController extends Controller
             $cookie = Cookie::forget('refresh_token');
 
             return response()->json([
-                "msg" => "logout successfull"
+                "message" => "logout successfull"
             ])->withCookie($cookie);
         } catch (JWTException $e) {
             return response()->json([
-                "msg" => "Impossible d'invalider le token"
+                "message" => "failed to invalid token"
             ], 500);
         }
     }
