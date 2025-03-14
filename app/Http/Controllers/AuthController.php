@@ -8,7 +8,7 @@ use App\Models\User;
 use Tymon\JWTAuth\Facades\JWTAuth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Validator;
-use Illuminate\Support\Facades\Cookie;
+
 
 class AuthController extends Controller
 {
@@ -30,21 +30,21 @@ class AuthController extends Controller
             ], 422);
         }
 
-        try{
+        try {
             $users = User::create([
-                        'fname' => $request->fname,
-                        'lname' => $request->lname,
-                        'email' => $request->email,
-                        'password' => $request->password,
-                        'address' => $request->address,
-                    ]);
+                'fname' => $request->fname,
+                'lname' => $request->lname,
+                'email' => $request->email,
+                'password' => $request->password,
+                'address' => $request->address,
+            ]);
             return response()->json([
                 'data' => $users,
-                'message'=> "Register Successfull",
+                'message' => "Register Successfull",
             ], 201);
-        }catch(Exception $e){
+        } catch (Exception $e) {
             return response()->json([
-                'data'=>$e->getMessage(),
+                'data' => $e->getMessage(),
                 'message' => 'Error while creating user'
             ], 500);
         }
@@ -56,49 +56,46 @@ class AuthController extends Controller
         $credentials = $request->only('email', 'password');
 
         try {
-            if (!$accessToken=JWTAuth::attempt($credentials)) return response()->json([
-                "data"=>null,
-                "msg"=>'check your mail or password'
-            ],401);
-        }
-        catch (JWTException $e) {
+            if (!$token = JWTAuth::attempt($credentials)) {
+                return response()->json([
+                    "data" => null,
+                    "msg" => 'Check your mail or password'
+                ], 401);
+            }
+        } catch (JWTException $e) {
             return response()->json([
-                'data'=>null,
-                'message'=>'Acces token fails']
-                ,401);
+                'data' => null,
+                'message' => 'Access token fails'
+            ], 401);
         }
 
-        $user=JWTAuth::user();
-        $refreshToken = JWTAuth::claims(['exp' => now()->addDays(7)->timestamp])->fromUser($user);
-
-        $cookie = Cookie::make('refresh_token', $refreshToken, 10080, '/', null, true, true, false, 'Strict');
+        $user = JWTAuth::user();
 
         return response()->json([
-            "data"=>$user,
-            "accessToken"=>$accessToken
-        ])->withCookie($cookie);
+            "data" => $user,
+            "token" => $token
+        ]);
     }
+
 
     public function logout()
     {
         try {
-
-            $accessToken = JWTAuth::getToken();
-            if ($accessToken) {
-                JWTAuth::invalidate($accessToken);
+            $token = JWTAuth::getToken();
+            if ($token) {
+                JWTAuth::invalidate($token);
             }
 
-            $cookie = Cookie::forget('refresh_token');
-
             return response()->json([
-                "message" => "logout successfull"
-            ])->withCookie($cookie);
+                "message" => "Logout successful"
+            ]);
         } catch (JWTException $e) {
             return response()->json([
-                "message" => "failed to invalid token"
+                "message" => "Failed to invalidate token"
             ], 500);
         }
     }
+
 
     public function userProfile()
     {
