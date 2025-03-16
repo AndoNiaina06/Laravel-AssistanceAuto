@@ -20,6 +20,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::middleware('auth:api')->group(function () {
     Route::get('/userProfile', [AuthController::class, 'userProfile']);
+    Route::get('/users-with-cars', [UserController::class, 'usersCountCar']);
     Route::apiResource('/cars', CarController::class);
     Route::apiResource('/insurances', InsuranceController::class);
     Route::apiResource('/interventions', InterventionController::class);

@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Models\Car;
+use Illuminate\Support\Facades\DB;
 
 class UserController extends Controller
 {
@@ -15,7 +17,16 @@ class UserController extends Controller
         //
 
     }
+    public function usersCountCar(){
+        $users = User::where('role', 'user')
+            ->withCount('cars')
+            ->get();
 
+        return response()->json([
+            "data" => $users,
+            "success" => true
+        ], 200);
+    }
     /**
      * Show the form for creating a new resource.
      */
@@ -63,4 +74,5 @@ class UserController extends Controller
     {
         //
     }
+
 }

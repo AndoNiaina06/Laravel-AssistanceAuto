@@ -18,13 +18,13 @@ class Intervention extends Model
         'localisation',
     ];
 
-    public function users()
+    public function user()
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(User::class);
     }
 
-    public function cars()
+    public function car()
     {
-        return $this->hasMany(Car::class);
+        return $this->belongsTo(Car::class);
     }
 }

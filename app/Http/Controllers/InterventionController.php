@@ -13,7 +13,7 @@ class InterventionController extends Controller
      */
     public function index()
     {
-        $interventions = Intervention::all();
+        $interventions = Intervention::with("user", "car")->get();
         if(!$interventions){
             return response()->json([
                 'success' => false,
@@ -121,8 +121,8 @@ class InterventionController extends Controller
         $validate = Validator::make($request->all(),[
             'user_id'=>'required|numeric|exists:users,id',
             'car_id'=>'required|numeric|exists:cars,id',
-            'typeintervention'=>'required|string|max:40',
-            'datedemand'=>'required|date',
+//            'typeintervention'=>'required|string|max:40',
+//            'datedemand'=>'required|date',
             'status'=>'required|string|max:40',
             'description'=>'nullable|string',
             'localisation' => 'nullable|string',
