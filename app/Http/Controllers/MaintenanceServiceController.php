@@ -15,7 +15,7 @@ class MaintenanceServiceController extends Controller
      */
     public function index()
     {
-        $maintenance_service = Maintenance_service::all();
+        $maintenance_service = Maintenance_service::with('car')->get();
         if(!$maintenance_service){
             return response()->json(
                 ['data'=>null
@@ -49,6 +49,7 @@ class MaintenanceServiceController extends Controller
             'dateservice' => 'required|date',
             'cout' => 'required|numeric|min:5000',
             'society' => 'nullable|string',
+            'status' => ''
         ],[
             'car_id.exists' => 'The specific car does\'t exist',
             'cout.min' => 'Service price must be superior 5000',
@@ -118,10 +119,11 @@ class MaintenanceServiceController extends Controller
         }
         $validate = Validator::make($request->all(), [
             'car_id' =>'required|numeric|exists:cars,id',
-            'typeservice'=>'required|string|max:50',
-            'dateservice' => 'required|date',
-            'cout' => 'required|numeric|min:5000',
+            'typeservice'=>'nullabble|string|max:50',
+            'dateservice' => 'nullable|date',
+            'cout' => 'nullable|numeric|min:5000',
             'society' => 'nullable|string',
+            'status' => 'nullable'
         ],[
             'car_id.exists' => 'The specific car does\'t exist',
             'cout.min' => 'Service price must be superior 5000',
@@ -154,7 +156,7 @@ class MaintenanceServiceController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Maintenance_service $maintenance_service)
+    public function destroy( $id)
     {
         $maintenance_service = Maintenance_service::find($id);
         if(!$maintenance_service){

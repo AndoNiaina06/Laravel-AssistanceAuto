@@ -19,7 +19,8 @@ return new class extends Migration
             $table->dateTime('datedemand');
             $table->boolean('status')->nullable()->default(false);
             $table->string('description', 255)->nullable();
-            $table->string('localisation', 255)->nullable();
+            $table->float('latitude', 10, 6)->nullable();
+            $table->float('longitude', 10, 6)->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
             $table->timestamps();

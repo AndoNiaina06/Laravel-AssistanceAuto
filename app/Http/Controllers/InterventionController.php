@@ -178,4 +178,18 @@ class InterventionController extends Controller
             ],401);
         }
     }
+    public function localisationProgress()
+    {
+        $interventions = Intervention::where('status', 'in progress')->get();
+        if(!$interventions){
+            return response()->json([
+                'success' => false,
+            ]);
+        }
+        return response()->json([
+            'data' => $interventions,
+            'Message'=>'loading'
+        ], 200);
+    }
+
 }

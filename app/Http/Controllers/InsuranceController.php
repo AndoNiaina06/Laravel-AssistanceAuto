@@ -14,7 +14,7 @@ class InsuranceController extends Controller
      */
     public function index()
     {
-        $insurance = Insurance::all();
+        $insurance = Insurance::with("user", "car")->get();
         if(!$insurance){
             return response()->json(
                 ['data'=>null
@@ -44,9 +44,11 @@ class InsuranceController extends Controller
     {
         $validate = Validator::make($request->all(), [
             'user_id' =>'required|numeric|exists:users,id',
+            'car_id' =>'required|numeric|exists:cars,id',
             'typeinsurance'=>'required|string|max:50',
             'startdate' => 'required|date',
             'enddate' => 'required|date|after_or_equal:startdate',
+            'status'=>'required|string|max:50',
             'insuranceprice' => 'nullable|numeric|min:5000',
         ],[
             'user_id.exists' => 'The specific user does\'t exist',
@@ -63,9 +65,11 @@ class InsuranceController extends Controller
         try {
             $insurances = Insurance::create([
                 'user_id' =>$request->user_id,
+                'car_id' =>$request->car_id,
                 'typeinsurance'=>$request->typeinsurance,
                 'startdate' => $request->startdate,
                 'enddate' => $request->enddate,
+                'status'=> $request->status,
                 'insuranceprice' => $request->insuranceprice,
             ]);
             return response()->json([
@@ -117,12 +121,15 @@ class InsuranceController extends Controller
         }
         $validate = Validator::make($request->all(), [
             'user_id' =>'required|numeric|exists:users,id',
-            'typeinsurance'=>'required|string|max:50',
-            'startdate' => 'required|date',
-            'enddate' => 'required|date|after_or_equal:startdate',
+            'car_id' =>'required|numeric|exists:cars,id',
+            'typeinsurance'=>'nullable|string|max:50',
+            'startdate' => 'nullable|date',
+            'enddate' => 'nullable|date|after_or_equal:startdate',
+            'status'=>'nullable|string|max:50',
             'insuranceprice' => 'nullable|numeric|min:5000',
         ],[
             'user_id.exists' => 'The specific user does\'t exist',
+            'car_id.exists' => 'The specific car does\'t exist',
             'insuranceprice.min' => 'Insurance price must be superior 5000',
         ]);
 

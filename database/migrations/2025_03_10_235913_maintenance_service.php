@@ -18,6 +18,7 @@ return new class extends Migration
             $table->dateTime('dateservice');
             $table->integer('cout')->unsigned()->default(5000);
             $table->string('society', 100)->nullable()->default('Carglass');
+            $table->string('status', 50)->nullable()->default('initio');
             $table->foreign('car_id')->references('id')->on('cars')->onDelete('cascade');
             $table->timestamps();
         });

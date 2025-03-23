@@ -14,10 +14,11 @@ class Maintenance_service extends Model
         'dateservice',
         'cout',
         'society',
+        'status',
 
     ];
-    public function cars()
+    public function car()
     {
-        return $this->hasMany(Car::class);
+        return $this->belongsTo(Car::class);
     }
 }

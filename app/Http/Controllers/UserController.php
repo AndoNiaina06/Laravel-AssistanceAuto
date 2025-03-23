@@ -15,6 +15,8 @@ class UserController extends Controller
     public function index()
     {
         //
+        $users = User::where('role', 'user')->get();
+        return response()->json($users);
 
     }
     public function usersCountCar(){
@@ -22,10 +24,12 @@ class UserController extends Controller
             ->withCount('cars')
             ->get();
 
-        return response()->json([
-            "data" => $users,
-            "success" => true
-        ], 200);
+        return response()->json($users, 200);
+    }
+    public function admin()
+    {
+        $users = User::where('role', 'admin')->get();
+        return response()->json($users, 200);
     }
     /**
      * Show the form for creating a new resource.
