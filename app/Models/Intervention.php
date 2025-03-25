@@ -15,7 +15,8 @@ class Intervention extends Model
         'datedemand',
         'status',
         'description',
-        'localisation',
+        'longitude',
+        'latitude',
     ];
 
     public function user()

@@ -13,13 +13,14 @@ use Illuminate\Queue\SerializesModels;
 class PostCreateEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
-
+    public $post;
     /**
      * Create a new event instance.
      */
-    public function __construct()
+    public function __construct(array $post)
     {
         //
+        $this->post = $post;
     }
 
     /**
@@ -30,7 +31,7 @@ class PostCreateEvent
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new Channel('chan-demo'),
         ];
     }
 }

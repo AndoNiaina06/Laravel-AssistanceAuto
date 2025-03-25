@@ -33,6 +33,8 @@ Route::middleware('auth:api')->group(function () {
 
 
     Route::apiResource('/cars', CarController::class);
+    Route::get('/my-car/{id}', [CarController::class, 'allCarUser']);
+
 
     Route::apiResource('/insurances', InsuranceController::class);
 

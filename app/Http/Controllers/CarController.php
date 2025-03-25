@@ -28,6 +28,20 @@ class CarController extends Controller
         ],
             200);
     }
+    public function allCarUser($id)
+    {
+        $cars = Car::where('user_id', $id)->get();
+        if(!$cars){
+            return response()->json([
+                'data'=> null,
+                'message'=> 'The car is empty or not found',
+            ]);
+        }
+        return response()->json([
+            'data'=> $cars,
+            'message' => '...'
+        ]);
+    }
 
     /**
      * Show the form for creating a new resource.

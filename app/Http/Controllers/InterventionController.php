@@ -125,7 +125,6 @@ class InterventionController extends Controller
 //            'datedemand'=>'required|date',
             'status'=>'required|string|max:40',
             'description'=>'nullable|string',
-            'localisation' => 'nullable|string',
         ],[
             'user_id.exists' => 'The selected user does not exist',
             'car_id.exists' => 'The selected cars does not exist',
