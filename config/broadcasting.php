@@ -56,6 +56,9 @@ return [
         'redis' => [
             'driver' => 'redis',
             'connection' => 'default',
+            'options' => [
+                'cluster' => 'redis',
+            ],
         ],
 
         'log' => [

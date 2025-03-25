@@ -19,8 +19,12 @@ class User extends Authenticatable implements JWTSubject
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'lname',
+        'fname',
+        'address',
         'email',
+        'role',
+        'status',
         'password',
     ];
 
@@ -29,10 +33,16 @@ class User extends Authenticatable implements JWTSubject
      *
      * @var array<int, string>
      */
+
     protected $hidden = [
         'password',
         'remember_token',
     ];
+
+    public function cars()
+    {
+        return $this->hasMany(Car::class, 'user_id');
+    }
 
     /**
      * The attributes that should be cast.
